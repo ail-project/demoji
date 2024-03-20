@@ -3,20 +3,7 @@
 Accurately find or remove [emojis](https://en.wikipedia.org/wiki/Emoji) from a blob of text using
 data from the Unicode Consortium's [emoji code repository](https://unicode.org/Public/emoji/).
 
-[![License](https://img.shields.io/github/license/bsolomon1124/demoji.svg)](https://github.com/bsolomon1124/demoji/blob/master/LICENSE)
-[![PyPI](https://img.shields.io/pypi/v/demoji.svg)](https://pypi.org/project/demoji/)
-[![Status](https://img.shields.io/pypi/status/demoji.svg)](https://pypi.org/project/demoji/)
-[![Python](https://img.shields.io/pypi/pyversions/demoji.svg)](https://pypi.org/project/demoji)
-
 -------
-
-## Major Changes in Version 1.x
-
-Version 1.x of `demoji` now bundles Unicode data in the package at install time rather than requiring
-a download of the codes from unicode.org at runtime. Please see the [CHANGELOG.md](CHANGELOG.md)
-for detail and be familiar with the changes before updating from 0.x to 1.x.
-
-To report any regressions, please [open a GitHub issue](https://github.com/bsolomon1124/demoji/issues/new?assignees=&labels=&template=bug_report.md&title=).
 
 ## Basic Usage
 

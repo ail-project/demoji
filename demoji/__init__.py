@@ -7,19 +7,16 @@ http://www.unicode.org/emoji/charts/full-emoji-list.html.
 __all__ = (
     "findall",
     "findall_list",
-    "last_downloaded_timestamp",
     "replace",
     "replace_with_desc",
 )
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
-import datetime
 import functools
 import logging
 import os.path
 import re
 import sys
-import warnings
 
 try:
     # Enable faster loads with ujson if installed
@@ -35,46 +32,7 @@ else:
     import importlib_resources
 
 # Download endpoint
-EMOJI_VERSION = "13.1"
-URL = "https://unicode.org/Public/emoji/%s/emoji-test.txt" % EMOJI_VERSION
-
-
-_depr_msg = (
-    "The %s attribute is deprecated"
-    " and will be removed from demoji in a future version."
-    " It is an unused attribute as emoji codes are now distributed"
-    " directly with the demoji package."
-)
-
-
-def __getattr__(name):
-    # Warn about deprecated attributes that are no longer used
-    if name == "DIRECTORY":
-        warnings.warn(
-            _depr_msg % "demoji.DIRECTORY",
-            FutureWarning,
-            stacklevel=2,
-        )
-        return os.path.join(os.path.expanduser("~"), ".demoji")
-    if name == "CACHEPATH":
-        warnings.warn(
-            _depr_msg % "demoji.CACHEPATH",
-            FutureWarning,
-            stacklevel=2,
-        )
-        return os.path.join(
-            os.path.join(os.path.expanduser("~"), ".demoji"), "codes.json"
-        )
-    raise AttributeError("module 'demoji' has no attribute '%s'" % name)
-
-
-def download_codes():
-    warnings.warn(
-        _depr_msg % "demoji.download_codes",
-        FutureWarning,
-        stacklevel=2,
-    )
-    return None
+URL = "https://unicode.org/Public/emoji/latest/emoji-test.txt"
 
 
 def cache_setter(func):
@@ -150,18 +108,6 @@ def replace_with_desc(string, sep=":"):
     for emoji, desc in found.items():
         result = result.replace(emoji, sep + desc + sep)
     return result
-
-
-# This variable is updated automatically from scripts/download_codes.py
-_LDT = datetime.datetime(
-    2021, 7, 18, 19, 57, 25, 20304, tzinfo=datetime.timezone.utc
-)  # noqa: E501
-
-
-def last_downloaded_timestamp():
-    # This is retained as a callable rather than plain module attribute
-    # for backwards compatibility.
-    return _LDT
 
 
 def _compile_codes(codes):

@@ -2,38 +2,30 @@
 
 """Download emoji data to package_data."""
 
-import datetime
 import json
 import pathlib
-import re
-import time
 
-import colorama
 import requests
 
 from demoji import URL
 
 # We do *not* use importlib.resources here since we just want the source file,
-# not where it (might) be instlled
+# not where it (might) be installed
 parent = pathlib.Path(__file__).parent.parent.resolve() / "demoji"
 CACHEPATH = parent / "codes.json"
 MODULEPATH = parent / "__init__.py"
 
 
-def download_codes(dest=CACHEPATH):
+def download_codes():
     codes = dict(stream_unicodeorg_emojifile(URL))
-    _write_codes(codes, CACHEPATH)
+    _write_codes(codes)
 
 
-def _write_codes(codes, dest):
-    print(
-        colorama.Fore.YELLOW
-        + "Writing emoji data to %s ..." % CACHEPATH
-        + colorama.Style.RESET_ALL
-    )
+def _write_codes(codes):
+    print(f'Writing emoji data to {CACHEPATH} ...')
     with open(CACHEPATH, "w") as f:
         json.dump(codes, f, separators=(",", ":"))
-    print(colorama.Fore.GREEN + "... OK" + colorama.Style.RESET_ALL)
+    print('... OK')
 
 
 def stream_unicodeorg_emojifile(url=URL):
@@ -56,19 +48,9 @@ def parse_unicode_range(string):
 
 
 def _raw_stream_unicodeorg_emojifile(url):
-    colorama.init()
-    print(
-        colorama.Fore.YELLOW
-        + "Downloading emoji data from %s ..." % URL
-        + colorama.Style.RESET_ALL
-    )
+    print(f'Downloading emoji data from {url} ...')
     resp = requests.request("GET", url, stream=True)
-    print(
-        colorama.Fore.GREEN
-        + "... OK"
-        + colorama.Style.RESET_ALL
-        + " (Got response in %0.2f seconds)" % resp.elapsed.total_seconds()
-    )
+    print(f'... OK (Got response in {resp.elapsed.total_seconds()} seconds)')
 
     POUNDSIGN = "#"
     POUNDSIGN_B = b"#"
@@ -81,25 +63,8 @@ def _raw_stream_unicodeorg_emojifile(url):
         codes, desc = line.split(SEMICOLON, 1)
         _, desc = desc.split(POUNDSIGN, 1)
         desc = desc.split(SPACE, 3)[-1]
-        yield (codes.strip(), desc.strip())
-
-
-def replace_lastdownloaded_timestamp():
-    with open(MODULEPATH) as f:
-        text = f.read()
-    now = datetime.datetime.fromtimestamp(
-        time.time(), tz=datetime.timezone.utc
-    )
-    ldt_re = re.compile(r"^_LDT = .*$", re.M)
-    with open(MODULEPATH, "w") as f:
-        f.write(ldt_re.sub("_LDT = %r  # noqa: E501" % now, text))
-    print(
-        colorama.Fore.GREEN
-        + "Replaced timestamp with %r in %s" % (now, MODULEPATH)
-        + colorama.Style.RESET_ALL
-    )
+        yield codes.strip(), desc.strip()
 
 
 if __name__ == "__main__":
     download_codes()
-    replace_lastdownloaded_timestamp()

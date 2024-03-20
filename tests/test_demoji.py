@@ -2,7 +2,6 @@
 
 from __future__ import unicode_literals
 
-import datetime
 import pytest
 
 import demoji
@@ -26,11 +25,6 @@ def test_setup():
     assert len(person_tipping_hand) == 1
     assert len(man_tipping_hand) == 4
     assert len(woman_tipping_hand) == 4
-
-
-def test_last_downloaded_timestamp_rettype():
-    ts = demoji.last_downloaded_timestamp()
-    assert isinstance(ts, datetime.datetime)
 
 
 def test_demoji_main(tweet):
@@ -58,7 +52,6 @@ def test_demoji_main(tweet):
         demoji.replace(allhands, "X")
         == "Someone actually gets paid to make a X, a X, and a X"
     )
-    assert isinstance(demoji.last_downloaded_timestamp(), datetime.datetime)
 
     # Something for everyone...
     batch = [
